@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import Home from './HomeComponent';
 import Menu from './MenuComponent';
+import Contact from './ContactComponent';
+import AboutUs from './AboutComponent';
 import Dishdetail from './DishdetailComponent';
 import { View, Platform } from 'react-native';
 import { createStackNavigator, createDrawerNavigator } from 'react-navigation';
@@ -25,17 +27,45 @@ const MenuNavigator = createStackNavigator({
 
 const HomeNavigator = createStackNavigator({
     Home: { screen: Home }
-  }, {
-    navigationOptions: ({ navigation }) => ({
-      headerStyle: {
-          backgroundColor: "#512DA8"
-      },
-      headerTitleStyle: {
-          color: "#fff"            
-      },
-      headerTintColor: "#fff"  
-    })
-});
+}, {
+        navigationOptions: ({ navigation }) => ({
+            headerStyle: {
+                backgroundColor: "#512DA8"
+            },
+            headerTitleStyle: {
+                color: "#fff"
+            },
+            headerTintColor: "#fff"
+        })
+    });
+
+const ContactNavigator = createStackNavigator({
+    Conatact: { screen: Contact }
+}, {
+        navigationOptions: ({ navigation }) => ({
+            headerStyle: {
+                backgroundColor: "#512DA8"
+            },
+            headerTitleStyle: {
+                color: "#fff"
+            },
+            headerTintColor: "#fff"
+        })
+    });
+
+const AboutUsNavigator = createStackNavigator({
+    AboutUs: { screen: AboutUs }
+}, {
+        navigationOptions: ({ navigation }) => ({
+            headerStyle: {
+                backgroundColor: "#512DA8"
+            },
+            headerTitleStyle: {
+                color: "#fff"
+            },
+            headerTintColor: "#fff"
+        })
+    });
 
 const MainNavigator = createDrawerNavigator({
     Home: {
@@ -45,11 +75,25 @@ const MainNavigator = createDrawerNavigator({
             drawerLabel: 'Home'
         }
     },
+    Contact: {
+        screen: ContactNavigator,
+        navigationOptions: {
+            title: 'Contact',
+            drawerLabel: 'Contact'
+        },
+    },
     Menu: {
         screen: MenuNavigator,
         navigationOptions: {
             title: 'Menu',
             drawerLabel: 'Menu'
+        },
+    },
+    AboutUs: {
+        screen: AboutUsNavigator,
+        navigationOptions: {
+            title: 'About Us',
+            drawerLabel: 'About Us'
         },
     }
 }, {
