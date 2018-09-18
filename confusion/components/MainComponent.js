@@ -5,6 +5,8 @@ import Contact from './ContactComponent';
 import AboutUs from './AboutComponent';
 import Dishdetail from './DishdetailComponent';
 import Reservation from './ReservationComponent';
+import Favorites from './FavoriteComponent';
+
 
 import { View, Platform, Image, StyleSheet, ScrollView, Text } from 'react-native';
 import { createStackNavigator, createDrawerNavigator, DrawerItems, SafeAreaView, } from 'react-navigation';
@@ -128,6 +130,24 @@ const AboutUsNavigator = createStackNavigator({
     });
 
 
+    const FavoritesNavigator = createStackNavigator({
+        Favorites: { screen: Favorites  }
+    }, {
+            navigationOptions: ({ navigation }) => ({
+                headerLeft: <Icon name='menu' size={24}
+                    color='white'
+                    onPress={() => navigation.toggleDrawer()} />,
+                headerStyle: {
+                    backgroundColor: "#512DA8"
+                },
+                headerTitleStyle: {
+                    color: "#fff"
+                },
+                headerTintColor: "#fff"
+            })
+        });
+
+
 const CustomDrawerContentComponent = (props) => (
     <ScrollView>
         <SafeAreaView style={styles.container}
@@ -168,6 +188,16 @@ const MainNavigator = createDrawerNavigator({
             )
         },
     },
+    Favorites: {
+        screen: FavoritesNavigator,
+        navigationOptions: {
+            title: 'My Favorites',
+            drawerLabel: 'My Favorites',
+            drawerIcon: ({ tintColor }) => (
+                <Icon name='heart' type='font-awesome' size={22} color={tintColor} />
+            )
+        },
+    },
     Reservation: {
         screen: ReservationNavigator,
         navigationOptions: {
@@ -197,7 +227,8 @@ const MainNavigator = createDrawerNavigator({
                 <Icon name='info-circle' type='font-awesome' size={24} color={tintColor} />
             )
         },
-    }
+    },
+   
 }, {
         drawerBackgroundColor: '#D1C4E9',
         contentComponent: CustomDrawerContentComponent
