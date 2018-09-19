@@ -8,6 +8,9 @@ import { baseUrl } from '../shared/baseUrl';
 
 import { postFavorite, postComments } from '../redux/ActionCreators';
 
+import * as Animatable from 'react-native-animatable';
+
+
 const mapStateToProps = state => {
     return {
         dishes: state.dishes,
@@ -29,34 +32,37 @@ function RenderDish(props) {
 
     if (dish != null) {
         return (
-            <Card
-                featuredTitle={dish.name}
-                image={{ uri: baseUrl + dish.image }}>
+            <Animatable.View animation="fadeInDown" duration={2000} delay={1000}>
 
-                <Text style={{ margin: 10 }}>
-                    {dish.description}
-                </Text>
-                <View style={styles.formRow}>
-                    <Icon
-                        raised
-                        reverse
-                        name={props.favorite ? 'heart' : 'heart-o'}
-                        type='font-awesome'
-                        color='#f50'
-                        onPress={() => props.favorite ? console.log('Already favorite') : props.onPress('fav')}
-                    />
-                    <Icon
-                        raised
-                        reverse
-                        name='pencil'
-                        type='font-awesome'
-                        color='#512DA8'
-                        onPress={() => props.onPress('com')}
-                    />
+                <Card
+                    featuredTitle={dish.name}
+                    image={{ uri: baseUrl + dish.image }}>
 
-                </View>
+                    <Text style={{ margin: 10 }}>
+                        {dish.description}
+                    </Text>
+                    <View style={styles.formRow}>
+                        <Icon
+                            raised
+                            reverse
+                            name={props.favorite ? 'heart' : 'heart-o'}
+                            type='font-awesome'
+                            color='#f50'
+                            onPress={() => props.favorite ? console.log('Already favorite') : props.onPress('fav')}
+                        />
+                        <Icon
+                            raised
+                            reverse
+                            name='pencil'
+                            type='font-awesome'
+                            color='#512DA8'
+                            onPress={() => props.onPress('com')}
+                        />
 
-            </Card>
+                    </View>
+
+                </Card>
+            </Animatable.View>
         );
     }
     else {
@@ -89,11 +95,14 @@ function RenderComments(props) {
     }
 
     return (
-        <Card title="Comments">
-            <FlatList data={comments}
-                renderItem={renderCommentItem}
-                keyExtractor={item => item.id.toString()} />
-        </Card>
+        <Animatable.View animation="fadeInUp" duration={2000} delay={1000}>
+
+            <Card title="Comments">
+                <FlatList data={comments}
+                    renderItem={renderCommentItem}
+                    keyExtractor={item => item.id.toString()} />
+            </Card>
+        </Animatable.View>
     );
 }
 
@@ -120,7 +129,7 @@ class Dishdetail extends Component {
 
 
     handelSubmit() {
-              this.props.postComments(this.state.dishId, this.state.rating, this.state.author, this.state.comment);
+        this.props.postComments(this.state.dishId, this.state.rating, this.state.author, this.state.comment);
         this.setState({ showModal: !this.state.showModal });
         this.resetForm();
 
@@ -176,7 +185,7 @@ class Dishdetail extends Component {
                             fractions={1}
                             startingValue={this.state.rating}
                             imageSize={40}
-                            onFinishRating={(value) => { this.setState({rating:value}) }}
+                            onFinishRating={(value) => { this.setState({ rating: value }) }}
                             style={{ paddingVertical: 10 }}
                         />
                         <Input
@@ -191,8 +200,8 @@ class Dishdetail extends Component {
                                 />
                             }
                             onChangeText={(text) => {
-                                this.setState( {  author: text })
-                            } }
+                                this.setState({ author: text })
+                            }}
                             value={this.state.author}
                             shake={true}
                         />
@@ -208,8 +217,8 @@ class Dishdetail extends Component {
                             }
                             style={{ margin: 10 }}
                             onChangeText={(text) => {
-                                this.setState( {  comment: text })
-                            } }
+                                this.setState({ comment: text })
+                            }}
                             value={this.state.comment}
                         />
                         <View style={styles.buttonContainer}>
@@ -217,7 +226,7 @@ class Dishdetail extends Component {
                                 onPress={() => {
                                     this.handelSubmit();
                                 }}
-                             
+
                                 style={{
                                     flex: 1,
                                     flexDirection: 'column',
@@ -255,16 +264,16 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         margin: 20
     },
-   
+
     modal: {
         justifyContent: 'center',
         margin: 20
     },
-   
+
     buttonContainer: {
         margin: 10
     },
-    
+
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Dishdetail);
