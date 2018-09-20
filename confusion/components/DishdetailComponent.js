@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, ScrollView, FlatList, StyleSheet, Button, Modal } from 'react-native';
+import { View, Text, ScrollView, FlatList, StyleSheet, Button, Modal, Alert, PanResponder } from 'react-native';
 import { Card, Icon, Rating, Input } from 'react-native-elements';
 // import { DISHES } from '../shared/dishes';
 // import { COMMENTS } from '../shared/comments';
@@ -9,6 +9,8 @@ import { baseUrl } from '../shared/baseUrl';
 import { postFavorite, postComments } from '../redux/ActionCreators';
 
 import * as Animatable from 'react-native-animatable';
+
+
 
 
 const mapStateToProps = state => {
@@ -30,9 +32,46 @@ const mapDispatchToProps = dispatch => ({
 function RenderDish(props) {
     const dish = props.dish;
 
+    const recognnizeDrag = ({ moveX, moveY, dx, dy }) => {
+        if (dx < -200)
+            return true;
+        else
+            return false;
+    }
+
+
+    const panResponder = PanResponder.create({
+        onStartShouldSetPanResponder: (e, gestureState) => {
+            return true;
+        },
+        onPanResponderEnd: (e, gestureState) => {
+            if (recognnizeDrag(gestureState))
+                Alert.alert(
+                    'Add to Favorites?',
+                    'Are you sure you wish to add ' + dish.name + ' to your favorites?',
+                    [
+                        {
+                            text: 'Cancel',
+                            onPress: () => console.log('Cancel pressed'),
+                            style: 'cancel'
+                        },
+                        {
+                            text: 'OK',
+                            onPress: () => props.favorite ? console.log('Already favorite') : props.onPress('fav'),
+                        }
+                    ],
+                    { cancelable: false }
+
+                )
+            return true;
+        }
+    });
+
+
     if (dish != null) {
         return (
-            <Animatable.View animation="fadeInDown" duration={2000} delay={1000}>
+            <Animatable.View animation="fadeInDown" duration={2000} delay={1000}
+            {...panResponder.panHandlers}>
 
                 <Card
                     featuredTitle={dish.name}
