@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, ScrollView, FlatList, StyleSheet, Button, Modal, Alert, PanResponder } from 'react-native';
+import { View, Text, ScrollView, FlatList, StyleSheet, Button, Modal, Alert, PanResponder, Share } from 'react-native';
 import { Card, Icon, Rating, Input } from 'react-native-elements';
 // import { DISHES } from '../shared/dishes';
 // import { COMMENTS } from '../shared/comments';
@@ -89,6 +89,17 @@ function RenderDish(props) {
 
     });
 
+    const shareDish = (title, message, url) => {
+
+        Share.share({
+            title: title,
+            message: title + ': ' + message + ' ' + url,
+            url: url
+        },{
+            dialogTitle: 'Share ' + title
+        });
+
+    }
 
     if (dish != null) {
         return (
@@ -121,6 +132,16 @@ function RenderDish(props) {
                             onPress={() => props.onPress('com')}
                         />
 
+                        <Icon
+                            raised
+                            reverse
+                            name='share'
+                            type='font-awesome'
+                            color='#51D2A8'
+                            onPress={() => shareDish(dish.name, dish.description, baseUrl + dish.image)}
+                        />
+
+
                     </View>
 
                 </Card>
@@ -136,6 +157,8 @@ function RenderComments(props) {
     const comments = props.comments;
 
     const renderCommentItem = ({ item, index }) => {
+
+
         return (
             <View key={index} style={{ margin: 10 }}>
                 <Text style={{ fontSize: 14 }}>
@@ -191,9 +214,10 @@ class Dishdetail extends Component {
 
 
     handelSubmit() {
-        this.props.postComments(this.state.dishId, this.state.rating, this.state.author, this.state.comment);
-        this.setState({ showModal: !this.state.showModal });
-        this.resetForm();
+        console.log('Submit-------');
+        // this.props.postComments(this.state.dishId, this.state.rating, this.state.author, this.state.comment);
+        // this.setState({ showModal: !this.state.showModal });
+        // this.resetForm();
 
 
     }
@@ -228,7 +252,7 @@ class Dishdetail extends Component {
                         if (value === 'fav') {
                             this.markFavorite(dishId);
                         }
-                        else {
+                        else if(value === 'com') {
                             this.handelComment(dishId);
                         }
                     }} />
@@ -285,9 +309,8 @@ class Dishdetail extends Component {
                         />
                         <View style={styles.buttonContainer}>
                             <Button
-                                onPress={() => {
-                                    this.handelSubmit();
-                                }}
+                                onPress={() => 
+                                    this.handelSubmit()}
 
                                 style={{
                                     flex: 1,
