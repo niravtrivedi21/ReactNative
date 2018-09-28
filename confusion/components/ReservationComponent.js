@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import { Text, View, ScrollView, StyleSheet, Picker, Switch, Button, Modal,Alert } from 'react-native';
+import { Text, View, ScrollView, StyleSheet, Picker, Switch, Button, Modal, Alert, ToastAndroid } from 'react-native';
 import { Card } from 'react-native-elements';
 import DatePicker from 'react-native-datepicker';
 
 import * as Animatable from 'react-native-animatable';
 
-import { Permissions, Notifications } from 'expo'
+import { Permissions, Notifications, Calendar } from 'expo'
 
 
 class Reservation extends Component {
@@ -30,9 +30,71 @@ class Reservation extends Component {
         this.setState({ showModal: !this.state.showModal })
     }
 
+    obtainCalendarPermission = async () => {
+        // const calendarPermission = await Permissions.askAsync(Permissions.CALENDAR);
+
+        // if (calendarPermission.status === 'granted') {
+        //     return true;
+        // }
+        // else {
+        //     return false;
+        // }
+        let permission = await Permissions.getAsync(Permissions.CALENDAR);
+        if(permission.status !== "granted") {
+            permission = await Permissions.askAsync(Permissions.CALENDAR);
+            if (permission.status !== 'granted') {
+                Alert.alert("Permission not granted to add event to calendar");
+            }
+        }
+        return permission;
+
+    }
+
+    addReservationToCalendar = async () => {
+        //const calendarPer = 
+        await this.obtainCalendarPermission();
+        // ToastAndroid.show('CalendarPermission!' + calendarPer,ToastAndroid.LONG);
+       // if (calendarPer) {
+            // setTimeout(() => {
+            //     const startDate = new Date(Date.parse(this.state.date));
+            //     ToastAndroid.show('CalendarPermission! start' + startDate, ToastAndroid.LONG);
+
+            // }, 1000);
+
+            // setTimeout(() => {
+            //     const endDate = new Date(Date.parse(startDate) + Date.parse(2 * 60 * 60 * 1000));
+            //     ToastAndroid.show('CalendarPermission! end' + endDate, ToastAndroid.LONG);
+
+            // }, 3000);
+
+
+           Calendar.createEventAsync(Calendar.DEFAULT, {
+                title: 'Con Fusion Table Reservation',
+                startDate: new Date(Date.parse(this.state.date)),
+                endDate: new Date(Date.parse(this.state.date) + 2 * 60 * 60 * 1000),
+                timeZone: 'Asia/Hong_Kong',
+                location: '121, Clear Water Bay Road, Clear Water Bay, Kowloon, Hong Kong'
+
+            })
+            .then(event => {
+                this.resetForm();
+                console.log('success', event);
+            })
+            .catch(error => {
+                console.log('failure', error);
+            });
+           
+            
+
+        // }
+        // else {
+        //     ToastAndroid.show('CalendarPermission! else' + calendarPer, ToastAndroid.LONG);
+        // }
+    }
+
     handleReservation() {
-       // console.log(JSON.stringify(this.state));
-       // this.toggaleModal();
+        // console.log(JSON.stringify(this.state));
+        // this.toggaleModal();
         // this.setState({
         //     guests:1,
         //     smoking:false,
@@ -43,7 +105,7 @@ class Reservation extends Component {
         Alert.alert(
             'Your Reservation OK?',
             'Number Of Guests:' + this.state.guests + '\n'
-            + 'Smoking?' + this.state.smoking + '\n' + 
+            + 'Smoking?' + this.state.smoking + '\n' +
             'Date and Time :' + this.state.date,
             [
                 {
@@ -53,10 +115,11 @@ class Reservation extends Component {
                 },
                 {
                     text: 'OK',
-                    onPress: () => {
-                        this.presentLocalNotification(this.state.date);
-                        this.resetForm();
-                    },
+                    onPress: () => this.addReservationToCalendar(),
+                    // {
+                    //     this.presentLocalNotification(this.state.date);
+                    //     this.resetForm();
+                    // },
                     style: 'cancel'
                 }
 
@@ -90,7 +153,7 @@ class Reservation extends Component {
         await this.obtainNotificationPermission();
         Notifications.presentLocalNotificationAsync({
             title: 'Your Reservation',
-            body: 'Reservation for '+ date + ' requested',
+            body: 'Reservation for ' + date + ' requested',
             ios: {
                 sound: true
             },
@@ -184,7 +247,7 @@ class Reservation extends Component {
 
                 </Animatable.View>
 
-                     {/* <Modal
+                {/* <Modal
                         animationType={'slide'}
                         transparent={false}
                         visible={this.state.showModal}
@@ -203,42 +266,42 @@ class Reservation extends Component {
                         </View>
                     </Modal> */}
             </ScrollView>
-                );
-            }
-        
-        }
-        
+        );
+    }
+
+}
+
 const styles = StyleSheet.create({
-                    formRow: {
-                    alignItems: 'center',
-                justifyContent: 'center',
-                flex: 1,
-                flexDirection: 'row',
-                margin: 20
-            },
+    formRow: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        flex: 1,
+        flexDirection: 'row',
+        margin: 20
+    },
     formLabel: {
-                    fontSize: 18,
-                flex: 2
-            },
+        fontSize: 18,
+        flex: 2
+    },
     formItem: {
-                    flex: 1
-            },
-    modal:{
-                    justifyContent: 'center',
-                margin:20
-            },
-    modalTitle:{
-                    fontSize: 24,
-                fontWeight:'bold',
-                backgroundColor:'#512DA8',
-                textAlign: 'center',
-                color:'white',
-                marginBottom:20
-            },
-    modalText:{
-                    fontSize: 18,
-                margin:10
-            }
-        })
-        
-        export default Reservation;
+        flex: 1
+    },
+    modal: {
+        justifyContent: 'center',
+        margin: 20
+    },
+    modalTitle: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        backgroundColor: '#512DA8',
+        textAlign: 'center',
+        color: 'white',
+        marginBottom: 20
+    },
+    modalText: {
+        fontSize: 18,
+        margin: 10
+    }
+})
+
+export default Reservation;

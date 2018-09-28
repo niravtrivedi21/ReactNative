@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Text, View, StyleSheet, ScrollView, Image } from 'react-native';
 import { Card, Icon, Input, CheckBox, Button } from 'react-native-elements';
-import { SecureStore, Permissions, ImagePicker, Asset, ImageManipulator,  } from 'expo';
+import { SecureStore, Permissions, ImagePicker, Asset, ImageManipulator } from 'expo';
 
 import { createBottomTabNavigator } from 'react-navigation';
 import { baseUrl } from '../shared/baseUrl';
@@ -146,6 +146,25 @@ class RegisterTab extends Component {
         }
     }
 
+    getImageFromGallery = async () => {
+        const galleryPermission = await Permissions.askAsync(Permissions.CAMERA);
+        const cameraRollPermission = await Permissions.askAsync(Permissions.CAMERA_ROLL);
+
+        if(galleryPermission.status === 'granted' && cameraRollPermission.status === 'granted'){
+            let pickedImage = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes:'All',
+                allowsEditing:true,
+                aspect:[4,3],
+                base64 : true
+            });
+
+            if(!pickedImage.cancelled){
+                // this.setState({ imageUrl: capturedImage.uri })
+                this.processImage(pickedImage.uri)
+            }
+        }
+    }
+
 
     processImage = async (imageUri) => {
         let processedImage = await ImageManipulator.manipulate(
@@ -201,6 +220,10 @@ class RegisterTab extends Component {
                         <Button
                         title='Camera'
                         onPress={this.getImageFromCamera}
+                        />
+                         <Button
+                        title='Gallery'
+                        onPress={this.getImageFromGallery}
                         />
                 </View>
 
@@ -285,7 +308,8 @@ const style = StyleSheet.create({
     imageContainer: {
         flex:1,
         flexDirection:'row',
-        margin:20
+        margin:20,
+        justifyContent: 'space-between',
     },
     image: {
         margin:10,
